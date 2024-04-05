@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1712356435 source:/home/kali/Desktop/TPAlgo/medication stock/main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
