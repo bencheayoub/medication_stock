@@ -17,7 +17,26 @@ struct med
     struct Date manufacturing_date, expiry_date;
 };
 
-// Time check////////////////////////////////////////////////////////////////////////////////////////
+// to make the ceses cool////////////////////////////////////////////////////////////////////////////////////
+
+void wait() {
+    printf("Press Enter to continue...\n");
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+    }
+    getchar();
+}
+
+void slowprint(const char *message) {
+    while (*message) {
+        putchar(*message);
+        fflush(stdout);
+        usleep(10000);
+        message++;
+    }
+}
+
+// Time check/////////////////////////////////////////////////////////////////////////////////////////////////
 
 int leapy(int year) {  // check if the year is leap
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -67,68 +86,92 @@ int today(int cy, int cm, int cd) { // check the date if it is logical
     return 0;
 }
 
-void av(struct Date *D) // complet the date of med
-{
-    do
-    {
-       printf("enter the year : ");
-       scanf(" %d", &D->y);
-       printf("enter the month : ");
-       scanf(" %d", &D->m);
-       printf("enter the day : ");
-       scanf(" %d", &D->d);
+void av(struct Date *D) {
 
-    }while(today(D->y, D->m, D->d) == 1);
+    do {
+        // Prompt user for year, month, and day
+        printf("Enter the year : ");
+        scanf("%d", &D->y);
+        printf("Enter the month : ");
+        scanf("%d", &D->m);
+        printf("Enter the day: ");
+        scanf("%d", &D->d);
 
+
+        // Provide user feedback if the date is invalid
+        if (today(D->y, D->m, D->d) == 1) {
+            printf("Invalid date. Please enter a valid date.\n");
+        }
+
+    } while (today(D->y, D->m, D->d) == 1);
 }
+
 
 //the array of the medications///////////////////////////////////////////////////////////////////////////////
 
-void fillmed(struct med arr[], int i,int cy,int cm,int cd){
+void fillmed(struct med arr[], int i, int cy, int cm, int cd) {
     system("clear");
     printf("Enter details for medication %d:\n", i + 1);
 
-        int l;
-        do {
-            printf("Name: ");
-            scanf("%s", arr[i].name);
-            l = 0;
-            for (int j = 0; j < i; j++) {
-                if (strcmp(arr[i].name, arr[j].name) == 0) {
-                    l = 1;
-                    printf("Error: Medication with this name already exists. Please enter a different name.\n");
-                    break;
-                }
+    // Enter medication name
+    int l;
+    do {
+        printf("Name: ");
+        scanf("%s", arr[i].name);
+        l = 0;
+        for (int j = 0; j < i; j++) {
+            if (strcmp(arr[i].name, arr[j].name) == 0) {
+                l = 1;
+                printf("Error: Medication with this name already exists. Please enter a different name.\n");
+                break;
             }
-        } while (l == 1);
+        }
+    } while (l == 1);
 
-        printf("Brand: ");
-        scanf("%s", arr[i].brand);
+    // Enter brand name
+    printf("Brand: ");
+    scanf("%s", arr[i].brand);
 
-        do {
-            printf("Quantity: ");
-            scanf("%d", &arr[i].q);
-            printf("Price: ");
-            scanf("%d", &arr[i].pr);
-        } while (arr[i].q <= 0 || arr[i].pr <= 0);
+    // Enter quantity and price
+    do {
+        printf("Quantity : ");
+        scanf("%d", &arr[i].q);
+        printf("Price : ");
+        scanf("%d", &arr[i].pr);
+        if (arr[i].q <= 0 || arr[i].pr <= 0) {
+            printf("Error: Quantity and price must be greater than zero. Please try again.\n");
+        }
+    } while (arr[i].q <= 0 || arr[i].pr <= 0);
 
-        do {
-            printf("Enter manufacturing date:\n");
-            av(&arr[i].manufacturing_date);
-        } while (today(arr[i].manufacturing_date.y, arr[i].manufacturing_date.m, arr[i].manufacturing_date.d) == 1 ||
-                 (arr[i].manufacturing_date.y > cy) ||
-                 (arr[i].manufacturing_date.y == cy && arr[i].manufacturing_date.m > cm) ||
-                 (arr[i].manufacturing_date.y == cy && arr[i].manufacturing_date.m == cm && arr[i].manufacturing_date.d > cd));
+    // Enter manufacturing date and validate it
+    do {
+        printf("Enter manufacturing date :\n");
+        av(&arr[i].manufacturing_date);
+        if (today(arr[i].manufacturing_date.y, arr[i].manufacturing_date.m, arr[i].manufacturing_date.d) == 1 ||
+            (arr[i].manufacturing_date.y > cy) ||
+            (arr[i].manufacturing_date.y == cy && arr[i].manufacturing_date.m > cm) ||
+            (arr[i].manufacturing_date.y == cy && arr[i].manufacturing_date.m == cm && arr[i].manufacturing_date.d > cd)) {
+            printf("Error: Invalid manufacturing date. Please enter a valid date.\n");
+        }
+    } while (today(arr[i].manufacturing_date.y, arr[i].manufacturing_date.m, arr[i].manufacturing_date.d) == 1 ||
+             (arr[i].manufacturing_date.y > cy) ||
+             (arr[i].manufacturing_date.y == cy && arr[i].manufacturing_date.m > cm) ||
+             (arr[i].manufacturing_date.y == cy && arr[i].manufacturing_date.m == cm && arr[i].manufacturing_date.d > cd));
 
-        do {
-            printf("Enter expiry date:\n");
-            av(&arr[i].expiry_date);
-        } while (arr[i].expiry_date.y < arr[i].manufacturing_date.y ||
-                 (arr[i].expiry_date.y == arr[i].manufacturing_date.y && arr[i].expiry_date.m < arr[i].manufacturing_date.m) ||
-                 (arr[i].expiry_date.y == arr[i].manufacturing_date.y && arr[i].expiry_date.m == arr[i].manufacturing_date.m && arr[i].expiry_date.d < arr[i].manufacturing_date.d));
-
-
+    // Enter expiry date and validate it
+    do {
+        printf("Enter expiry date :\n");
+        av(&arr[i].expiry_date);
+        if (arr[i].expiry_date.y < arr[i].manufacturing_date.y ||
+            (arr[i].expiry_date.y == arr[i].manufacturing_date.y && arr[i].expiry_date.m < arr[i].manufacturing_date.m) ||
+            (arr[i].expiry_date.y == arr[i].manufacturing_date.y && arr[i].expiry_date.m == arr[i].manufacturing_date.m && arr[i].expiry_date.d < arr[i].manufacturing_date.d)) {
+            printf("Error: Invalid expiry date. Expiry date cannot be earlier than the manufacturing date. Please enter a valid date.\n");
+        }
+    } while (arr[i].expiry_date.y < arr[i].manufacturing_date.y ||
+             (arr[i].expiry_date.y == arr[i].manufacturing_date.y && arr[i].expiry_date.m < arr[i].manufacturing_date.m) ||
+             (arr[i].expiry_date.y == arr[i].manufacturing_date.y && arr[i].expiry_date.m == arr[i].manufacturing_date.m && arr[i].expiry_date.d < arr[i].manufacturing_date.d));
 }
+
 
 void fill(struct med arr[], int N, int cy, int cm, int cd) {
 
@@ -138,74 +181,80 @@ void fill(struct med arr[], int N, int cy, int cm, int cd) {
     }
 }
 
-
 //Expired fonctions//////////////////////////////////////////////////////////////////////////////////////////////
-
-int expired(struct med arr[], int N, int cy, int cm, int cd, int index) {
-    int expiry_year = arr[index].expiry_date.y;
-    int expiry_month = arr[index].expiry_date.m;
-    int expiry_day = arr[index].expiry_date.d;
-
-    if (expiry_year < cy ||
-        (expiry_year == cy && expiry_month < cm) ||
-        (expiry_year == cy && expiry_month == cm && expiry_day < cd)) {
-        return 1; // Medication is expired
+void expired(struct med arr[], int N, int cy, int cm, int cd) {
+    int i;
+    for( i = 0; i < N; i++)
+    if (arr[i].expiry_date.y < cy ||
+        (arr[i].expiry_date.y == cy && arr[i].expiry_date.m < cm) ||
+        (arr[i].expiry_date.y == cy && arr[i].expiry_date.m == cm && arr[i].expiry_date.d < cd)) {
+         printf("The medication %s is Expired\n", arr[i].name);
     }
-
-    if ((expiry_year == cy && expiry_month == cm + 1) ||
-        (expiry_year == cy + 1 && cm == 12 && expiry_month == 1)) {
-        return 2; // Medication will expire soon(in a month or less)
-    }
-    return 0;
-}
-
-
-void expiredmed(struct med arr[], int N,int cy,int cm,int cd)
-{
-    for( int i = 0; i < N; i++){
-        if(expired(arr, N, cy, cm, cd) == 1)
-        {
-            printf("The medication %s is Expired\n", arr[i].name);
-        }
-        else if(expired(arr, N, cy, cm, cd) == 2)
-        {
-            printf("The medication %s will expire soon\n", arr[i].name);
-        }
+    if ((arr[i].expiry_date.y == cy && arr[i].expiry_date.m == cm + 1) ||
+        (arr[i].expiry_date.y == cy + 1 && cm == 12 && arr[i].expiry_date.m == 1)) {
+        printf("The medication %s will expire soon\n", arr[i].name);
     }
 
 }
 
-void delexpire(struct med arr[], int *N, int cy, int cm, int cd)
-{
-    for(int i = 0; i < *N; i++)
-    {
-        if(expired(arr, *N, cy, cm, cd) == 1)
-        {
+// Function to delete expired medications from the array
+void delexpire(struct med *arr, int *N, int cy, int cm, int cd) {
+    for (int i = 0; i < *N; i++) {
+        // Check if the current medication is expired
+        if (arr[i].expiry_date.y < cy ||
+            (arr[i].expiry_date.y == cy && arr[i].expiry_date.m < cm) ||
+            (arr[i].expiry_date.y == cy && arr[i].expiry_date.m == cm && arr[i].expiry_date.d < cd)) {
+
+            // Shift all medications one position back from index i to remove the expired medication
             for (int j = i; j < *N - 1; j++) {
                 arr[j] = arr[j + 1];
             }
+
+            // Decrement the count of medications
             (*N)--;
+
+            // Print a message indicating successful deletion
             printf("Medication '%s' deleted successfully.\n", arr[i].name);
-            break;
+
+            // Decrement i to continue checking the same index after removal
+            i--;
         }
     }
-
-
 }
+
+
+
 
 // Affichage of the array//////////////////////////////////////////////////////////////////////////////
 
-void getmed(struct med arr[], int i)
-{
-    printf("Medication %d:\n", i + 1);
-    printf("Name: %s\n", arr[i].name);
-    printf("Brand: %s\n", arr[i].brand);
-    printf("Quantity: %d\n", arr[i].q);
-    printf("Price: %d\n", arr[i].pr);
-    printf("Manufacturing Date: %d/%d/%d\n", arr[i].manufacturing_date.d, arr[i].manufacturing_date.m, arr[i].manufacturing_date.y);
-    printf("Expiry Date: %d/%d/%d\n", arr[i].expiry_date.d, arr[i].expiry_date.m, arr[i].expiry_date.y);
-    printf("\n");
+void getmed(struct med arr[], int i) {
+    char buffer[256]; // A buffer to hold the formatted message
+
+    // Format and print each part of the medication information
+    sprintf(buffer, "Medication %d:\n", i + 1);
+    slowprint(buffer);
+
+    sprintf(buffer, "Name: %s\n", arr[i].name);
+    slowprint(buffer);
+
+    sprintf(buffer, "Brand: %s\n", arr[i].brand);
+    slowprint(buffer);
+
+    sprintf(buffer, "Quantity: %d\n", arr[i].q);
+    slowprint(buffer);
+
+    sprintf(buffer, "Price: %d\n", arr[i].pr);
+    slowprint(buffer);
+
+    sprintf(buffer, "Manufacturing Date: %d/%d/%d\n", arr[i].manufacturing_date.d, arr[i].manufacturing_date.m, arr[i].manufacturing_date.y);
+    slowprint(buffer);
+
+    sprintf(buffer, "Expiry Date: %d/%d/%d\n", arr[i].expiry_date.d, arr[i].expiry_date.m, arr[i].expiry_date.y);
+    slowprint(buffer);
+
+    slowprint("\n");
 }
+
 
 void show(struct med arr[], int N) // show the information of the med
 {
@@ -329,12 +378,24 @@ void delmed(struct med arr[], int *N) // delet a medication from the stock
     }
 }
 
-void addmed(struct med arr[], int *N, int cy, int cm, int cd)
-{
-    int i;
-    N = N + 1;
-    fillmed(arr, N, cy, cm, cd);
+void addmed(struct med **arr, int *N, int cy, int cm, int cd) {
+    // Increment the number of arr
+    int new_size = *N + 1;
+    printf("%d", sizeof(struct med));
+    struct med *new_medications = realloc(*arr, new_size * sizeof(struct med));
+    printf("%d", sizeof(struct med));
+    if (new_medications == NULL) {
+        printf("Failed to allocate memory for new medication.\n");
+        return;
+    }
+
+    *arr = new_medications;
+    *N = new_size;
+
+    fillmed(*arr, *N - 1, cy, cm, cd);
 }
+
+
 
 // the FILE of the medications////////////////////////////////////////////////////////////////////////////////////////
 
@@ -376,33 +437,26 @@ void medfile(struct med arr[], int N)
     fclose(fichier);
 }
 
-// to make the ceses cool////////////////////////////////////////////////////////////////////////////////////
-
-void wait() {
-    printf("Press Enter to continue...\n");
-    int ch;
-    while ((ch = getchar()) != '\n' && ch != EOF) {
-    }
-    getchar();
-}
-
-
-
 int main()
 {
     int N, choice;
     int cy, cm, cd;
-    do {
-        printf("Enter the current year: ");
-        scanf("%d", &cy);
-        printf("Enter the current month: ");
+      do {
+        printf("Enter the current year : ");
+        scanf("%d", &cd);
+        printf("Enter the current month : ");
         scanf("%d", &cm);
         printf("Enter the current day: ");
         scanf("%d", &cd);
+
+        if (today(cy, cm, cd) == 1) {
+            printf("Invalid date. Please enter a valid date.\n");
+        }
+
     } while (today(cy, cm, cd) == 1);
 
 
-    printf("Enter the number of medications: ");
+    slowprint("Enter the number of medications: ");
     scanf("%d", &N);
 
     struct med *medications = malloc(N * sizeof(struct med));
@@ -412,16 +466,16 @@ int main()
     do
     {
     system("clear");
-    printf("Enter you choice (0-6) :");
-    printf("\n0. End the program.");
-    printf("\n1. Add a medication.");
-    printf("\n2. Show all medications.");
-    printf("\n3. Search a medication by its first letter.");
-    printf("\n4. Delete a medication.");
-    printf("\n5. Update a new quantity to a medication.");
-    printf("\n6. Show the expired medications or that will expire soon.");
-    printf("\n7. Delete the expired medications");
-    printf("\n8. Record the medications in a file\n");
+    slowprint("Enter you choice (0-8) :");
+    slowprint("\n0. End the program.");
+    slowprint("\n1. Add a medication.");
+    slowprint("\n2. Show all medications.");
+    slowprint("\n3. Search a medication by its first letter.");
+    slowprint("\n4. Delete a medication.");
+    slowprint("\n5. Update a new quantity to a medication.");
+    slowprint("\n6. Show the expired medications or that will expire soon.");
+    slowprint("\n7. Delete the expired medications");
+    slowprint("\n8. Record the medications in a file\n");
 
     scanf("%d", &choice);
     switch(choice)
@@ -429,7 +483,7 @@ int main()
         case 0:
            break;
         case 1:
-           addmed(medications, N, cy, cm, cd);
+           addmed(&medications, &N, cy, cm, cd);
            wait();
            break;
         case 2:
@@ -449,11 +503,11 @@ int main()
            wait();
            break;
         case 6:
-           expiredmed(medications, N, cy, cm, cd);
+           expired(medications, N, cy, cm, cd);
            wait();
            break;
         case 7:
-            delexpire(medications, N, cy, cm, cd);
+            delexpire(medications, &N, cy, cm, cd);
             break;
         case 8:
             medfile(medications, N);
@@ -465,6 +519,11 @@ int main()
     }
 
     }while(choice != 0);
+    system("clear");
+    slowprint("Thank you for your trust in our program.");
+    sleep(1);
+    slowprint("\nSee you Next Time.");
+
     free(medications);
     return 0;
 }
