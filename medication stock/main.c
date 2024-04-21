@@ -183,22 +183,30 @@ void fill(struct med arr[], int N, int cy, int cm, int cd) {
 
 //Expired fonctions//////////////////////////////////////////////////////////////////////////////////////////////
 void expired(struct med arr[], int N, int cy, int cm, int cd) {
-    int i;
+    int i, j;
+    j=0;
     for( i = 0; i < N; i++)
     if (arr[i].expiry_date.y < cy ||
         (arr[i].expiry_date.y == cy && arr[i].expiry_date.m < cm) ||
         (arr[i].expiry_date.y == cy && arr[i].expiry_date.m == cm && arr[i].expiry_date.d < cd)) {
          printf("The medication %s is Expired\n", arr[i].name);
+         j++;
     }
     if ((arr[i].expiry_date.y == cy && arr[i].expiry_date.m == cm + 1) ||
         (arr[i].expiry_date.y == cy + 1 && cm == 12 && arr[i].expiry_date.m == 1)) {
         printf("The medication %s will expire soon\n", arr[i].name);
+        j++;
+    }
+    if(j == 0)
+    {
+        slowprint("There is no Expired medications or that will expired soon.\n");
     }
 
 }
 
 // Function to delete expired medications from the array
 void delexpire(struct med *arr, int *N, int cy, int cm, int cd) {
+int E;
     for (int i = 0; i < *N; i++) {
         // Check if the current medication is expired
         if (arr[i].expiry_date.y < cy ||
@@ -218,7 +226,12 @@ void delexpire(struct med *arr, int *N, int cy, int cm, int cd) {
 
             // Decrement i to continue checking the same index after removal
             i--;
+            E++;
         }
+    }
+    if(E == 0)
+    {
+        slowprint("there is no expired medications.\n");
     }
 }
 
@@ -353,8 +366,7 @@ void updateq(struct med arr[], int N) // update new qantity
 
 }
 
-void delmed(struct med arr[], int *N) // delet a medication from the stock
-{
+void delmed(struct med arr[], int *N) {
     char name[50];
     int found = 0;
 
@@ -367,6 +379,7 @@ void delmed(struct med arr[], int *N) // delet a medication from the stock
             for (int j = i; j < *N - 1; j++) {
                 arr[j] = arr[j + 1];
             }
+            memset(&arr[*N - 1], 0, sizeof(struct med));
             (*N)--;
             printf("Medication '%s' deleted successfully.\n", name);
             break;
@@ -443,7 +456,7 @@ int main()
     int cy, cm, cd;
       do {
         printf("Enter the current year : ");
-        scanf("%d", &cd);
+        scanf("%d", &cy);
         printf("Enter the current month : ");
         scanf("%d", &cm);
         printf("Enter the current day: ");
@@ -495,7 +508,7 @@ int main()
            wait();
            break;
         case 4:
-           delmed(medications, N);
+           delmed(medications, &N);
            wait();
            break;
         case 5:
